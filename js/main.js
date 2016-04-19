@@ -1,7 +1,6 @@
 
 var IOConsole = React.createClass({
     getInitialState: function() {
-        console.log("get initial state")
         var projectsSrc = this.getLocalSetting("projectsSrc") || "https://boiling-torch-3324.firebaseio.com/v3/users/maxb/projects";
         var modulesSrc = this.getLocalSetting("modulesSrc") || "https://boiling-torch-3324.firebaseio.com/v3/modules";
         var iovisorLoc = this.getLocalSetting("iovisorLoc") || "";
@@ -50,8 +49,6 @@ var IOConsole = React.createClass({
     },
 
     componentWillMount: function() {
-        console.log("component will mount")
-        console.log(this.state.iovisorLoc)
         this.firebaseProjectsRef = new Firebase(this.state.projectsSrc);
         this.firebaseProjectsRef.on("value", function(dataSnapshot) {
             this.handleFirebaseProjects(dataSnapshot)
@@ -62,22 +59,7 @@ var IOConsole = React.createClass({
             this.handleFirebaseModules(dataSnapshot)
         }.bind(this));
 
-        $.ajax({
-            url: this.state.iovisorLoc + "/modules/host/interfaces/" 
-        }).then(
-            function(data) {
-                this.setState({
-                    networkInterfaces: data
-                });
-            }.bind(this),
-            function() {
-                console.log("Could not get network interfaces from " + "/modules/host/interfaces/");
-                console.log("Using placeholder network interface");
-                this.setState({
-                    networkInterfaces: networkInterfaces
-                });
-            }.bind(this)
-        );
+        this.updateIOVisorPath({iovisorLoc: this.state.iovisorLoc});
    
     },
 
@@ -128,6 +110,30 @@ var IOConsole = React.createClass({
         this.setState({
             iovisorLoc: payload.iovisorLoc
         });
+        if (payload.iovisorLoc == ""){
+            console.log("Empty IO Visor path provided");
+            console.log("Using placeholder network interface");
+            this.setState({
+                networkInterfaces: networkInterfaces
+            });
+        } else{
+            $.ajax({
+                url: this.state.iovisorLoc + "/modules/host/interfaces/"
+            }).then(
+                function(data) {
+                    this.setState({
+                        networkInterfaces: data
+                    });
+                }.bind(this),
+                function() {
+                    console.log("Could not get network interfaces from " + "/modules/host/interfaces/");
+                    console.log("Using placeholder network interface");
+                    this.setState({
+                        networkInterfaces: networkInterfaces
+                    });
+                }.bind(this)
+            );
+        }
     },
 
     handleProjectsIfcMapping: function(projectsObj, selectedProject) {
@@ -456,7 +462,7 @@ var IOConsole = React.createClass({
         var newProjectPoliciesObject = newProjectObject.policies || {};
         var projectDependenciesObject = newProjectObject.dependencies || {};
         
-        if (moduleType == "component"){
+        if (moduleType == "component" || "bpf/forward"){
             var newID = "comp-" + ioid();
             var newViewData = {
                 "x": posX,
@@ -935,7 +941,7 @@ var IOConsole = React.createClass({
         var workspaceOriginX = workspaceElement.left;
         var workspaceOriginY = workspaceElement.top;
 
-        if (dropType == "component"){
+        if (dropType == "component" || dropType == "bpf/forward"){
             var dims = this.props.componentInProgress
         }
         else if (dropType == "policy") {
@@ -1180,7 +1186,7 @@ var IOConsole = React.createClass({
                     thisX = {this.state.cursorX} 
                     thisY = {this.state.cursorY}/>
             }
-            else if (moduleType == "component"){
+            else if (moduleType == "component" || moduleType == "bpf/forward"){
                 componentInProgress = <ComponentInProgress
                     thisModuleID = {moduleID} 
                     moduleName = {moduleName} 
@@ -1270,7 +1276,8 @@ var IOConsole = React.createClass({
                             openModal = {this.openModal} 
                             openMenu = {this.openMenu}
                             openPopover = {this.openPopover}
-                            renameProject = {this.renameProject}/>
+                            renameProject = {this.renameProject}
+                            iovisorLoc = {this.state.iovisorLoc}/>
                     </div>
                     <div id="workspace">
                         <Workspace 

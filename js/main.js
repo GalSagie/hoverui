@@ -1,7 +1,6 @@
 
 var IOConsole = React.createClass({
     getInitialState: function() {
-
         var defaultFirebaseModulesSrc = "https://io-visor-modules.firebaseio.com";
         var defaultFirebaseProjectsSrc = "https://io-visor-projects.firebaseio.com";
 
@@ -53,8 +52,6 @@ var IOConsole = React.createClass({
     },
 
     componentWillMount: function() {
-
-
         var firebaseModulesConfig = {
             databaseURL: this.state.modulesSrc
         };
@@ -63,15 +60,11 @@ var IOConsole = React.createClass({
             databaseURL: this.state.projectsSrc
         };
 
+        this.firebaseProjects = firebase.initializeApp(firebaseProjectsConfig, "Projects");
+        this.firebaseProjectsRef = this.firebaseProjects.database().ref();
 
-                      // Intialize the "[DEFAULT]" App
-              this.firebaseProjects = firebase.initializeApp(firebaseProjectsConfig, "Projects");
-              this.firebaseProjectsRef = this.firebaseProjects.database().ref();
-
-              // Intialize a "Secondary" App
-              this.firebaseModules = firebase.initializeApp(firebaseModulesConfig, "Modules");
-              this.firebaseModulesRef = this.firebaseModules.database().ref();
-
+        this.firebaseModules = firebase.initializeApp(firebaseModulesConfig, "Modules");
+        this.firebaseModulesRef = this.firebaseModules.database().ref();
 
         this.firebaseProjectsRef.on("value", function(dataSnapshot) {
             this.handleFirebaseProjects(dataSnapshot)
@@ -82,7 +75,6 @@ var IOConsole = React.createClass({
         }.bind(this));
 
         this.updateIOVisorPath({iovisorLoc: this.state.iovisorLoc});
-   
     },
 
     updateDataSources: function(payload){

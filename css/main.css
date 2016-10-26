@@ -470,12 +470,12 @@ body::-webkit-scrollbar {
 
 .modalContainer input.affirmative {
   background-color: #cccccc;
-  border: 1px solid #e6e6e6;
+  border: 1px solid #d9d9d9;
 }
 
 .modalContainer input.affirmative:hover:not(.disabled) {
   background-color: #e0e0e0;
-  border: 1px solid white;
+  border: 1px solid #f2f2f2;
 }
 
 .componentInProgress {
@@ -930,7 +930,7 @@ body::-webkit-scrollbar {
 
 .home {
   border-bottom: 1px solid #941432;
-  background: linear-gradient(#ca1c44, #af183b);
+  background: #af183b;
   padding: 0 8px 0 15px;
   display: flex;
   flex: 0 0 40px;
@@ -1044,8 +1044,9 @@ body::-webkit-scrollbar {
 
 .ioModules .moduleItem {
   display: flex;
-  padding: 5px 5px 5px 15px;
+  padding: 7px 5px 7px 15px;
   margin: 0 -5px;
+  position: relative;
 }
 
 .ioModules .moduleItem:hover {
@@ -1057,9 +1058,24 @@ body::-webkit-scrollbar {
   cursor: -webkit-grab;
 }
 
+.ioModules .moduleItem:hover .dragTip {
+  opacity: 1;
+  transition: opacity 200ms;
+  transition-delay: 500ms;
+}
+
 .ioModules .moduleItem .content {
   flex: 1 1 auto;
   margin-right: 3px;
+}
+
+.ioModules .moduleItem .dragTip {
+  opacity: 0;
+  color: rgba(255, 255, 255, 0.5);
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  font-size: 10px;
 }
 
 .ioModules .moduleDescription {
@@ -1070,7 +1086,7 @@ body::-webkit-scrollbar {
 
 .ioModules .categorySection {
   border-bottom: 1px dotted grey;
-  padding: 1px 0 4px 0;
+  padding: 4px 0 4px 0;
   margin-right: 6px;
 }
 

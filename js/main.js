@@ -1,8 +1,12 @@
 
 var IOConsole = React.createClass({
     getInitialState: function() {
-        var projectsSrc = this.getLocalSetting("projectsSrc") || "https://boiling-torch-3324.firebaseio.com/v3/users/maxb/projects";
-        var modulesSrc = this.getLocalSetting("modulesSrc") || "https://boiling-torch-3324.firebaseio.com/v3/modules";
+
+        var defaultFirebaseModulesSrc = "https://io-visor-modules.firebaseio.com";
+        var defaultFirebaseProjectsSrc = "https://io-visor-projects.firebaseio.com";
+
+        var projectsSrc = this.getLocalSetting("projectsSrc") || defaultFirebaseProjectsSrc;
+        var modulesSrc = this.getLocalSetting("modulesSrc") || defaultFirebaseModulesSrc;
         var iovisorLoc = this.getLocalSetting("iovisorLoc") || "";
         
         var categoryVisibility = this.getLocalSetting("categoryVisibility") || {};
@@ -49,12 +53,30 @@ var IOConsole = React.createClass({
     },
 
     componentWillMount: function() {
-        this.firebaseProjectsRef = new Firebase(this.state.projectsSrc);
+
+
+        var firebaseModulesConfig = {
+            databaseURL: this.state.modulesSrc
+        };
+
+        var firebaseProjectsConfig = {
+            databaseURL: this.state.projectsSrc
+        };
+
+
+                      // Intialize the "[DEFAULT]" App
+              this.firebaseProjects = firebase.initializeApp(firebaseProjectsConfig, "Projects");
+              this.firebaseProjectsRef = this.firebaseProjects.database().ref();
+
+              // Intialize a "Secondary" App
+              this.firebaseModules = firebase.initializeApp(firebaseModulesConfig, "Modules");
+              this.firebaseModulesRef = this.firebaseModules.database().ref();
+
+
         this.firebaseProjectsRef.on("value", function(dataSnapshot) {
             this.handleFirebaseProjects(dataSnapshot)
         }.bind(this));
 
-        this.firebaseModulesRef = new Firebase(this.state.modulesSrc);
         this.firebaseModulesRef.on("value", function(dataSnapshot) {
             this.handleFirebaseModules(dataSnapshot)
         }.bind(this));
@@ -446,12 +468,15 @@ var IOConsole = React.createClass({
     },
 
     handleNewObjectDrop: function(moduleID, posX, posY){
+
         var selectedProject = this.state.projectsObject[this.state.selectedProjectID];
 
         var selectedProjectFirebaseRef = this.firebaseProjectsRef.child(this.state.selectedProjectID);
 
         var moduleObject = this.state.modulesObject[moduleID];
+        console.log(moduleObject);
         var moduleType = moduleObject.type || "component";
+
 
         var newProjectObject = _.cloneDeep(selectedProject);
 
@@ -462,7 +487,8 @@ var IOConsole = React.createClass({
         var newProjectPoliciesObject = newProjectObject.policies || {};
         var projectDependenciesObject = newProjectObject.dependencies || {};
         
-        if (moduleType == "component" || "bpf/forward"){
+        if (moduleType == "component" || moduleType == "bpf/forward"){
+           // console.log(moduleType);
             var newID = "comp-" + ioid();
             var newViewData = {
                 "x": posX,

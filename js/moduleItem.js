@@ -10,6 +10,7 @@ var ModuleItem = React.createClass({
 	  					<span className="version">{this.props.moduleItem.version}</span>
 	  				</h3>
 	  				<div className="moduleDescription">{this.props.moduleItem.description}</div>
+	  				<div className = "dragTip">Drag to Canvas</div>
   				</div>
       		</div>
 		);

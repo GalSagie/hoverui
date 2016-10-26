@@ -1,5 +1,6 @@
 # Hover UI
-![alt tag](https://cloud.githubusercontent.com/assets/1617259/14193702/ecfeb024-f75b-11e5-9064-08c1fb8b4190.gif)
+![alt tag](https://cloud.githubusercontent.com/assets/15094187/19744811/ee431d0e-9b83-11e6-9f70-126c0f4fb50c.gif)
+-[Click here for sandbox](https://io-visor-hover.firebaseapp.com/)
 ## Deploying using Docker
   1. Clone hoverui git repository
   2. Install Docker
